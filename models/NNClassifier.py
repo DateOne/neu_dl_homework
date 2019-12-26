@@ -20,11 +20,11 @@ class NeuralNetwork(object):
 		'''
 		self.params = {}
 		self.params['W1'] = opt.standard * np.random.randn(input_size, opt.hidden_size)
-		self.params['b1'] = np.zeros(hidden_size)
+		self.params['b1'] = np.zeros(opt.hidden_size)
 		self.params['W2'] = opt.standard * np.random.randn(opt.hidden_size, output_size)
 		self.params['b2'] = np.zeros(output_size)
 
-	def loss(self, X, y=None, opt):   #opt: reg as regulization
+	def loss(self, X, y, opt):   #opt: reg as regulization
 		'''calculate loss and grads
 		'''
 		W1, b1 = self.params['W1'], self.params['b1']
@@ -35,7 +35,7 @@ class NeuralNetwork(object):
 		hidden_output = np.maximum(0, np.dot(X, W1) + b1)
 		output = np.dot(hidden_output, W2) + b2
 
-		f = outputs - np.max(outputs, axis=1, keepdims=True)
+		f = output - np.max(output, axis=1, keepdims=True)
 		loss = -f[range(N), y].sum() + np.log(np.exp(f).sum(axis=1)).sum()   #softmax loss
 		loss = loss / N + 0.5 * opt.regulization * (np.sum(W1 * W1) + np.sum(W2 * W2))   #regulization
 
@@ -64,7 +64,7 @@ class NeuralNetwork(object):
 		lr = opt.learning_rate
 
 		training_set_len = X.shape[0]   #length of training set
-		iterations_per_epoch = max(training_set_len / opt.batch_size, 1)
+		#iterations_per_epoch = max(training_set_len / opt.batch_size, 1)
 
 		loss_log = []   #log
 		train_acc_log = []
@@ -82,14 +82,17 @@ class NeuralNetwork(object):
 			self.params['b1'] -= lr * grads['b1']
 			self.params['W2'] -= lr * grads['W2']
 			self.params['b2'] -= lr * grads['b2']
-
+			
 			if e % 100 == 0:
-				print('iteration {} / {}: loss {}' % (e, epoch, loss))
+				#print('epoch {} / {}: loss {}'.format(e, opt.epoch, loss))
 
-			if e % iterations_per_epoch == 0:
+			#if e % iterations_per_epoch == 0:
 				train_acc = (self.predict(X_batch) == y_batch).mean()
+				#print(self.predict(X_val) == y_val)
+				#print(self.predict(X_val).shape)
+				#print(y_val.shape)
 				val_acc = (self.predict(X_val) == y_val).mean()
-
+				print('epoch {} / {}: loss {}, acc {}, val {}'.format(e, opt.epoch, loss, train_acc, val_acc))
 				train_acc_log.append(train_acc)
 				val_acc_log.append(val_acc)
 
@@ -105,6 +108,6 @@ class NeuralNetwork(object):
 
 		hidden_output = np.maximum(0, np.dot(X, W1) + b1)
 		output = np.dot(hidden_output, W2) + b2
-		pred = np.argmax(output, axis = 1)
+		pred = np.argmax(output, axis=1)
 
 		return pred

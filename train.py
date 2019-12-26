@@ -11,7 +11,7 @@ import argparse
 
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
+#import pandas as pd
 
 import time
 
@@ -58,33 +58,33 @@ def dataloader(opt):
 	validation_data = x[opt.trainingset_size :]
 
 	training_label = y[: opt.trainingset_size]
-	validation_label = y[: opt.trainingset_size]
+	validation_label = y[opt.trainingset_size :]
 
 	return training_data, training_label, validation_data, validation_label
 
 if __name__ == '__main__':
-	parser.argparse.ArgumentParser('neural network')
+	parser = argparse.ArgumentParser('neural network')
 
 	parser.add_argument(
 		'-e', '--epoch', type=int,
 		help='number of epoch',
-		default=100)
+		default=100000)
 	parser.add_argument(
-		'-b', '--batch', type=int,
+		'-b', '--batch_size', type=int,
 		help='batch size',
-		default=200)
+		default=20)
 	parser.add_argument(
 		'-lr', '--learning_rate', type=float,
 		help='learning rate',
-		default=1e-3)
+		default=8e-5)
 	parser.add_argument(
 		'-lr_dk', '--learning_rate_decay', type=float,
 		help='learning rate decay',
-		default=0.95)
+		default=0.999995)
 	parser.add_argument(
-		'-h', 'hidden_size', type=int,
+		'-h_s', '--hidden_size', type=int,
 		help='neural network hidden layer size',
-		default=8)
+		default=12)
 	parser.add_argument(
 		'-std', '--standard', type=float,
 		help='initialization standard deviation',
@@ -111,7 +111,7 @@ if __name__ == '__main__':
 
 	model = NeuralNetwork(input_size, num_classes, args)
 
-	log = model.train(X, y, X_val, y_val, opt)
+	log = model.train(X, y, X_val, y_val, args)
 
 	plt.subplot(2, 1, 1)
 	plt.plot(log['loss_log'])
