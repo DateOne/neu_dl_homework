@@ -2,7 +2,8 @@
 ```
 python train.py --model='SVM'
 ```
-to run SVM classifier\
+to run SVM classifier/
+
 
 ```
 python train.py --model='NN'
