@@ -19,9 +19,9 @@ class NeuralNetwork(object):
 		initialize parameters
 		'''
 		self.params = {}
-		self.params['W1'] = opt.standard * np.random.randn(input_size, opt.hidden_size)
+		self.params['W1'] = opt.NN_standard * np.random.randn(input_size, opt.hidden_size)
 		self.params['b1'] = np.zeros(opt.hidden_size)
-		self.params['W2'] = opt.standard * np.random.randn(opt.hidden_size, output_size)
+		self.params['W2'] = opt.NN_standard * np.random.randn(opt.hidden_size, output_size)
 		self.params['b2'] = np.zeros(output_size)
 
 	def loss(self, X, y, opt):   #opt: reg as regulization
@@ -37,7 +37,7 @@ class NeuralNetwork(object):
 
 		f = output - np.max(output, axis=1, keepdims=True)
 		loss = -f[range(N), y].sum() + np.log(np.exp(f).sum(axis=1)).sum()   #softmax loss
-		loss = loss / N + 0.5 * opt.regulization * (np.sum(W1 * W1) + np.sum(W2 * W2))   #regulization
+		loss = loss / N + 0.5 * opt.NN_regulization * (np.sum(W1 * W1) + np.sum(W2 * W2))   #regulization
 
 		grads = {}
 
@@ -45,13 +45,13 @@ class NeuralNetwork(object):
 		doutput[range(N), y] -= 1
 		doutput /= N
 
-		grads['W2'] = np.dot(hidden_output.T, doutput) + opt.regulization * W2
+		grads['W2'] = np.dot(hidden_output.T, doutput) + opt.NN_regulization * W2
 		grads['b2'] = np.sum(doutput, axis = 0)
 
 		dhidden = np.dot(doutput, W2.T)
 		dhidden[hidden_output <= 0.00001] = 0
 
-		grads['W1'] = np.dot(X.T, dhidden) + opt.regulization * W1
+		grads['W1'] = np.dot(X.T, dhidden) + opt.NN_regulization * W1
 		grads['b1'] = np.sum(dhidden, axis = 0)
 
 		return loss, grads
