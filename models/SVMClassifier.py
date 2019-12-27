@@ -13,7 +13,6 @@ class SVM(object):
 	'''SVM class
 	'''
 	def __init__(self, input_size, output_size, opt):
-		self.num_train, _ = X.shape
 		self.num_classes = output_size
 
 		self.W = opt.SVM_standard * np.random.randn(input_size, output_size)
@@ -39,6 +38,8 @@ class SVM(object):
 
 	def train(self, X, y, X_val, y_val, opt):
 		#opt: leanring_rate, reg, epoch, batch_size
+		self.num_train, _ = X.shape
+
 		loss_log = []
 		train_acc_log = []
 		val_acc_log = []
